@@ -4,151 +4,151 @@
  */
 
 export interface paths {
-  "/protocols": {
+  '/protocols': {
     /** Get all protocols of boardroom */
-    get: operations["getProtocols"];
-  };
-  "/protocols/{cname}/proposals": {
+    get: operations['getProtocols']
+  }
+  '/protocols/{cname}/proposals': {
     /** Get all proposals for a protocol */
-    get: operations["getProtocolProposals"];
-  };
-  "/proposals": {
+    get: operations['getProtocolProposals']
+  }
+  '/proposals': {
     /** Get proposals across all protocols */
-    get: operations["getProposals"];
-  };
-  "/proposals/{refId}/votes": {
+    get: operations['getProposals']
+  }
+  '/proposals/{refId}/votes': {
     /** Get votes on a proposal */
-    get: operations["getProposalVotes"];
-  };
-  "/protocols/{cname}": {
+    get: operations['getProposalVotes']
+  }
+  '/protocols/{cname}': {
     /** Get a single protocol details */
-    get: operations["getProtocolDetails"];
-  };
-  "/proposals/{refId}": {
+    get: operations['getProtocolDetails']
+  }
+  '/proposals/{refId}': {
     /** Get a single proposal */
-    get: operations["getProposal"];
-  };
-  "/voters/{address}/votes": {
+    get: operations['getProposal']
+  }
+  '/voters/{address}/votes': {
     /** Get votes by voter */
-    get: operations["getVoterVotes"];
-  };
-  "/protocols/{cname}/voters": {
+    get: operations['getVoterVotes']
+  }
+  '/protocols/{cname}/voters': {
     /** Get all voters for a protocol */
-    get: operations["getProtocolVoters"];
-  };
-  "/voters": {
+    get: operations['getProtocolVoters']
+  }
+  '/voters': {
     /** Get voters across all protocols */
-    get: operations["getVoters"];
-  };
-  "/voters/{address}": {
+    get: operations['getVoters']
+  }
+  '/voters/{address}': {
     /** Get details for a specific voter */
-    get: operations["getVoter"];
-  };
-  "/stats": {
+    get: operations['getVoter']
+  }
+  '/stats': {
     /** Get global platform stats */
-    get: operations["getStats"];
-  };
+    get: operations['getStats']
+  }
 }
 
 export interface components {
   schemas: {
     Protocol: {
       icons?: {
-        adapter?: string;
-        size?: string;
-        url?: string;
-      }[];
+        adapter?: string
+        size?: string
+        url?: string
+      }[]
       tokens?: {
-        network?: string;
-        contractAddress?: string;
+        network?: string
+        contractAddress?: string
         marketPrices?: {
-          currency?: string;
-          price?: number;
-        }[];
-        adapter?: string;
-        symbol?: string;
-      }[];
-      cname?: string;
-      name?: string;
-      totalProposals?: number;
-      totalVotes?: number;
-      uniqueVoters?: number;
-    };
+          currency?: string
+          price?: number
+        }[]
+        adapter?: string
+        symbol?: string
+      }[]
+      cname?: string
+      name?: string
+      totalProposals?: number
+      totalVotes?: number
+      uniqueVoters?: number
+    }
     Proposal: {
-      startTimestamp?: number;
-      endTimestamp?: number;
-      title?: string;
-      content?: string;
-      protocol?: string;
-      adapter?: string;
+      startTimestamp?: number
+      endTimestamp?: number
+      title?: string
+      content?: string
+      protocol?: string
+      adapter?: string
       startTime?: {
-        blockNumber?: number;
-      };
-      id?: string;
-      currentState?: string;
+        blockNumber?: number
+      }
+      id?: string
+      currentState?: string
       results?: {
-        total?: number;
-        choice?: number;
-      }[];
-      choices?: { [key: string]: unknown }[];
+        total?: number
+        choice?: number
+      }[]
+      choices?: { [key: string]: unknown }[]
       events?: {
-        timestamp?: number;
+        timestamp?: number
         time?: {
-          blockNumber?: number;
-        };
-        event?: string;
-      }[];
-      refId?: string;
-      proposer?: string;
-      totalVotes?: number;
-      blockNumber?: number;
+          blockNumber?: number
+        }
+        event?: string
+      }[]
+      refId?: string
+      proposer?: string
+      totalVotes?: number
+      blockNumber?: number
       endTime?: {
-        blockNumber?: number;
-      };
-    };
+        blockNumber?: number
+      }
+    }
     Voter: {
-      address?: string;
-      firstVoteCast?: number;
-      lastVoteCast?: number;
-      totalVotesCast?: number;
+      address?: string
+      firstVoteCast?: number
+      lastVoteCast?: number
+      totalVotesCast?: number
       protocols?: {
-        lastCastPower?: number;
-        protocol?: string;
-        totalVotesCast?: number;
-        lastVoteCast?: number;
-        firstVoteCast?: number;
-        totalPowerCast?: number;
-      }[];
-    };
+        lastCastPower?: number
+        protocol?: string
+        totalVotesCast?: number
+        lastVoteCast?: number
+        firstVoteCast?: number
+        totalPowerCast?: number
+      }[]
+    }
     Vote: {
-      protocol?: string;
+      protocol?: string
       proposalInfo?: {
         startTime?: {
-          timestamp?: number;
-        };
+          timestamp?: number
+        }
         endTime?: {
-          timestamp?: number;
-        };
-        title?: string;
-        choices?: string[];
-        currentState?: string;
-        endTimestamp?: number;
-        startTimestamp?: number;
-        events?: string[];
-      };
-      adapter?: string;
-      address?: string;
-      refId?: string;
-      proposalRefId?: string;
-      power?: number;
+          timestamp?: number
+        }
+        title?: string
+        choices?: string[]
+        currentState?: string
+        endTimestamp?: number
+        startTimestamp?: number
+        events?: string[]
+      }
+      adapter?: string
+      address?: string
+      refId?: string
+      proposalRefId?: string
+      power?: number
       time?: {
-        timestamp?: number;
-      };
-      choice?: number;
-      proposalId?: string;
-      timestamp?: number;
-    };
-  };
+        timestamp?: number
+      }
+      choice?: number
+      proposalId?: string
+      timestamp?: number
+    }
+  }
 }
 
 export interface operations {
@@ -158,195 +158,195 @@ export interface operations {
       /** Response */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Protocol"][];
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Protocol'][]
+          }
+        }
+      }
+    }
+  }
   /** Get all proposals for a protocol */
   getProtocolProposals: {
     parameters: {
       path: {
         /** Protocol cname. */
-        cname: string;
-      };
-    };
+        cname: string
+      }
+    }
     responses: {
       /** Response */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Proposal"][];
-            nextCursor?: string;
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Proposal'][]
+            nextCursor?: string
+          }
+        }
+      }
+    }
+  }
   /** Get proposals across all protocols */
   getProposals: {
     responses: {
       /** Response */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Proposal"][];
-            nextCursor?: string;
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Proposal'][]
+            nextCursor?: string
+          }
+        }
+      }
+    }
+  }
   /** Get votes on a proposal */
   getProposalVotes: {
     parameters: {
       path: {
         /** Proposal refId. */
-        refId: string;
-      };
-    };
+        refId: string
+      }
+    }
     responses: {
       /** Response */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Vote"][];
-            nextCursor?: string;
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Vote'][]
+            nextCursor?: string
+          }
+        }
+      }
+    }
+  }
   /** Get a single protocol details */
   getProtocolDetails: {
     parameters: {
       path: {
         /** Protocol cname. */
-        cname: string;
-      };
-    };
+        cname: string
+      }
+    }
     responses: {
       /** Response */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Protocol"];
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Protocol']
+          }
+        }
+      }
+    }
+  }
   /** Get a single proposal */
   getProposal: {
     parameters: {
       path: {
         /** Proposal refId. */
-        refId: string;
-      };
-    };
+        refId: string
+      }
+    }
     responses: {
       /** Response */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Proposal"];
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Proposal']
+          }
+        }
+      }
+    }
+  }
   /** Get votes by voter */
   getVoterVotes: {
     parameters: {
       path: {
         /** Voter address. */
-        address: string;
-      };
-    };
+        address: string
+      }
+    }
     responses: {
       /** Response */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Vote"][];
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Vote'][]
+          }
+        }
+      }
+    }
+  }
   /** Get all voters for a protocol */
   getProtocolVoters: {
     parameters: {
       path: {
         /** Protocol cname. */
-        cname: string;
-      };
-    };
+        cname: string
+      }
+    }
     responses: {
       /** Response */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Voter"][];
-            nextCursor?: string;
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Voter'][]
+            nextCursor?: string
+          }
+        }
+      }
+    }
+  }
   /** Get voters across all protocols */
   getVoters: {
     responses: {
       /** Response */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Voter"][];
-            nextCursor?: string;
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Voter'][]
+            nextCursor?: string
+          }
+        }
+      }
+    }
+  }
   /** Get details for a specific voter */
   getVoter: {
     parameters: {
       path: {
         /** Voter address. */
-        address: string;
-      };
-    };
+        address: string
+      }
+    }
     responses: {
       /** Auto generated using Swagger Inspector */
       200: {
         content: {
-          "application/json": {
-            data?: components["schemas"]["Voter"];
-          };
-        };
-      };
-    };
-  };
+          'application/json': {
+            data?: components['schemas']['Voter']
+          }
+        }
+      }
+    }
+  }
   /** Get global platform stats */
   getStats: {
     responses: {
       /** Response */
       200: {
         content: {
-          "application/json": {
+          'application/json': {
             data?: {
-              totalProposals?: number;
-              totalVotesCast?: number;
-              totalUniqueVoters?: number;
-              totalProtocols?: number;
-            };
-          };
-        };
-      };
-    };
-  };
+              totalProposals?: number
+              totalVotesCast?: number
+              totalUniqueVoters?: number
+              totalProtocols?: number
+            }
+          }
+        }
+      }
+    }
+  }
 }
 
 export interface external {}

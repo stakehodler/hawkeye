@@ -1,25 +1,28 @@
 import axios from 'axios'
-import {operations} from "./types/schema/swagger";
+import { operations } from './types/schema/swagger'
 
-const BASE_API_URL = "https://api.boardroom.info/v1/";
+const BASE_API_URL = 'https://api.boardroom.info/v1/'
 
 const instance = axios.create({
-    baseURL: BASE_API_URL,
+  baseURL: BASE_API_URL,
 })
 
-type GetProtocolsResponse = operations["getProtocols"]["responses"]["200"]["content"]["application/json"]
+type GetProtocolsResponse =
+  operations['getProtocols']['responses']['200']['content']['application/json']
 const getProtocols = () => {
-    return instance.get<GetProtocolsResponse>('/protocols')
+  return instance.get<GetProtocolsResponse>('/protocols')
 }
 
-type GetProtocolProposalsResponse = operations["getProtocolProposals"]["responses"]["200"]["content"]["application/json"]
+type GetProtocolProposalsResponse =
+  operations['getProtocolProposals']['responses']['200']['content']['application/json']
 const getProtocolProposals = (cname: string) => {
-    return instance.get<GetProtocolProposalsResponse>(`/protocols/${cname}/proposals`)
+  return instance.get<GetProtocolProposalsResponse>(`/protocols/${cname}/proposals`)
 }
 
-type GetProposalVotesResponse = operations["getProposalVotes"]["responses"]["200"]["content"]["application/json"]
+type GetProposalVotesResponse =
+  operations['getProposalVotes']['responses']['200']['content']['application/json']
 const getProtocolVotes = (refId: string) => {
-    return instance.get<GetProposalVotesResponse>(`/proposals/${refId}/votes`)
+  return instance.get<GetProposalVotesResponse>(`/proposals/${refId}/votes`)
 }
 
-export {getProtocols, getProtocolProposals, getProtocolVotes}
+export { getProtocols, getProtocolProposals, getProtocolVotes }
