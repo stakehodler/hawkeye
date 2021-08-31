@@ -1,0 +1,546 @@
+openapi: 3.0.0
+info:
+  description: |
+    This is Boardroom api. You can find
+    out more about Boardroom at
+    [https://docs.boardroom.info](https://docs.boardroom.info)
+  version: "1.0.0"
+  title: Boardroom API
+  termsOfService: 'http://boardroom.info/terms/'
+  contact:
+    email: nikhil@boardroom.info
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: Boardroom API
+    url: https://api.boardroom.info/v1/
+tags:
+  - name: protocol
+    description: Protocol Data
+  - name: proposal
+    description: Proposal Data
+  - name: vote
+    description: vote data
+  - name: voter
+    description: voter data
+
+paths:
+  /protocols:
+    get:
+      tags:
+        - protocol
+      summary: Get all protocols
+      operationId: getProtocols
+      description: Get all protocols of boardroom
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Protocol'
+              example: >-
+                  {"data":[{"cname":"aave","name":"Aave","totalProposals":28,"totalVotes":1270,"uniqueVoters":733,"icons":[{"adapter":"default","size":"thumb","url":"https://assets.coingecko.com/coins/images/12645/thumb/AAVE.png?1601374110"}],"tokens":[{"adapter":"default","symbol":"aave","network":"ethereum","contractAddress":"0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9","marketPrices":[{"currency":"usd","price":387.86}]}]}]}
+
+  /protocols/{cname}/proposals:
+    get:
+      tags:
+        - proposal
+      summary: Get all proposals for a protocol
+      operationId: getProtocolProposals
+      parameters:
+        - name: cname
+          in: path
+          description: Protocol cname.
+          required: true
+          example: aave
+          schema:
+            type: string
+      description: Get all proposals for a protocol
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Proposal'
+                  nextCursor:
+                    type: string
+              example: >-
+                {"data":[{"refId":"cHJvcG9zYWw6YWF2ZTpkZWZhdWx0OjI3","id":"27","title":"Add DPI on Aave V2","content":"Summary","protocol":"aave","adapter":"default","proposer":"0x7f4C5938AF9731e9feadc09C3FA782508198532E","totalVotes":20,"blockNumber":13044092,"startTime":{"blockNumber":13044092},"endTime":{"blockNumber":13063292},"startTimestamp":1629221854,"endTimestamp":1629475458,"currentState":"active","choices":["NAY","YAE"],"results":[{"total":411686.47,"choice":1}],"events":[{"time":{"blockNumber":12986707},"event":"executed","timestamp":1628455780}]}],"nextCursor":"eyJ=="}
+
+  /proposals:
+    get:
+      tags:
+        - proposal
+      summary: Get proposals across all protocols
+      operationId: getProposals
+      description: Get proposals across all protocols
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Proposal'
+                  nextCursor:
+                    type: string
+              example: >-
+                {"data":[{"refId":"cHJvcG9zYWw6YWF2ZTpkZWZhdWx0OjI3","id":"27","title":"Add DPI on Aave V2","content":"Summary","protocol":"aave","adapter":"default","proposer":"0x7f4C5938AF9731e9feadc09C3FA782508198532E","totalVotes":20,"blockNumber":13044092,"startTime":{"blockNumber":13044092},"endTime":{"blockNumber":13063292},"startTimestamp":1629221854,"endTimestamp":1629475458,"currentState":"active","choices":["NAY","YAE"],"results":[{"total":411686.47,"choice":1}],"events":[{"time":{"blockNumber":12986707},"event":"executed","timestamp":1628455780}]}],"nextCursor":"eyJ=="}
+
+  /proposals/{refId}/votes:
+    get:
+      tags:
+        - vote
+      summary: Get votes on a proposal
+      operationId: getProposalVotes
+      parameters:
+        - name: refId
+          in: path
+          description: Proposal refId.
+          required: true
+          example: cHJvcG9zYWw6c3VzaGk6ZGVmYXVsdDpxbXM3a3ljNGtyNmUxZ3NzY3NrNW1wb2VkZmt0dzhvaHFyY2FoM2prN213NzVr
+          schema:
+            type: string
+      description: Get votes on a proposal
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vote'
+                  nextCursor:
+                    type: string
+              example: >-
+                {"data":[{"refId":"dm90ZTpzdXNoaTpkZWZhdWx0OnFtczdreWM0a3I2ZTFnc3Njc2s1bXBvZWRma3R3OG9ocXJjYWgzams3bXc3NWs6MHhkNDA5Y2VhOWRkOGRiMzA1MDQxNjgwNjM5NTNjZTFmYTIwNzQ4Y2Fi","proposalRefId":"cHJvcG9zYWw6c3VzaGk6ZGVmYXVsdDpxbXM3a3ljNGtyNmUxZ3NzY3NrNW1wb2VkZmt0dzhvaHFyY2FoM2prN213NzVr","protocol":"sushi","adapter":"default","proposalId":"QmS7kYC4KR6E1gssCsK5MPoeDfktW8oHqRCaH3jK7mW75K","address":"0xd409ceA9dD8dB30504168063953cE1Fa20748cab","power":147811.42,"choice":0,"time":{"timestamp":1625066741},"timestamp":1625066741}],"nextCursor":"eyJhZGRyZXNzIjoiMHg1QTlkZDlDN2ZBRkI0OWY3NzhmQzQ1MDgyMDAwMzg1NzhFNEMxY2E2IiwicG93ZXIiOjI3MC43MjMwMn0="}
+
+  /protocols/{cname}:
+    get:
+      tags:
+        - protocol
+      summary: Get a single protocol
+      operationId: getProtocolDetails
+      parameters:
+        - name: cname
+          in: path
+          description: Protocol cname.
+          required: true
+          example: aave
+          schema:
+            type: string
+      description: Get a single protocol details
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Protocol'
+              example: >-
+                {"data":{"cname":"aave","name":"Aave","totalProposals":28,"totalVotes":1270,"uniqueVoters":733,"icons":[{"adapter":"default","size":"thumb","url":"https://assets.coingecko.com/coins/images/12645/thumb/AAVE.png?1601374110"},{"adapter":"default","size":"small","url":"https://assets.coingecko.com/coins/images/12645/small/AAVE.png?1601374110"},{"adapter":"default","size":"large","url":"https://assets.coingecko.com/coins/images/12645/large/AAVE.png?1601374110"}],"tokens":[{"adapter":"default","symbol":"aave","network":"ethereum","contractAddress":"0x7fc66500c84a76ad7e9c93437bfc5ac33e2ddae9","marketPrices":[{"currency":"usd","price":384.14}]}]}}
+
+  /proposals/{refId}:
+    get:
+      tags:
+        - proposal
+      summary: Get a single proposal
+      operationId: getProposal
+      parameters:
+        - name: refId
+          in: path
+          description: Proposal refId.
+          required: true
+          example: cHJvcG9zYWw6c3VzaGk6ZGVmYXVsdDpxbXM3a3ljNGtyNmUxZ3NzY3NrNW1wb2VkZmt0dzhvaHFyY2FoM2prN213NzVr
+          schema:
+            type: string
+      description: Get a single proposal
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Proposal'
+              example: >-
+                  {"data":{"refId":"cHJvcG9zYWw6c3VzaGk6ZGVmYXVsdDpxbXM3a3ljNGtyNmUxZ3NzY3NrNW1wb2VkZmt0dzhvaHFyY2FoM2prN213NzVr","id":"QmS7kYC4KR6E1gssCsK5MPoeDfktW8oHqRCaH3jK7mW75K","title":"Buy
+                  MemePad - https://memepad.co/ - LaunchPad for Meme
+                  coins","content":"Buy MemePad - https://memepad.co/ -
+                  LaunchPad for Meme
+                  coins","protocol":"sushi","adapter":"default","proposer":"0xb9d3c5bB5DE7cf779321962dC61A725e5358fF05","totalVotes":266,"blockNumber":12590827,"externalUrl":"https://snapshot.org/#/sushigov.eth/proposal/QmS7kYC4KR6E1gssCsK5MPoeDfktW8oHqRCaH3jK7mW75K","startTime":{"timestamp":1623031200},"endTime":{"timestamp":1684980000},"startTimestamp":1623031200,"endTimestamp":1684980000,"currentState":"active","choices":["YES","YES"],"results":[{"total":181771.86,"choice":0},{"total":12996.031,"choice":1}],"events":[{"time":{"blockNumber":12986707},"event":"executed","timestamp":1628455780}]}}
+
+  /voters/{address}/votes:
+    get:
+      tags:
+        - vote
+      summary: Get votes by voter
+      operationId: getVoterVotes
+      parameters:
+        - name: address
+          in: path
+          description: Voter address.
+          required: true
+          example: "0xd409ceA9dD8dB30504168063953cE1Fa20748cab"
+          schema:
+            type: string
+      description: Get votes by voter
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Vote'
+              example: >-
+                    {"data":[{"refId":"dm90ZTpzdXNoaTpkZWZhdWx0OnFtczdreWM0a3I2ZTFnc3Njc2s1bXBvZWRma3R3OG9ocXJjYWgzams3bXc3NWs6MHhkNDA5Y2VhOWRkOGRiMzA1MDQxNjgwNjM5NTNjZTFmYTIwNzQ4Y2Fi","proposalRefId":"cHJvcG9zYWw6c3VzaGk6ZGVmYXVsdDpxbXM3a3ljNGtyNmUxZ3NzY3NrNW1wb2VkZmt0dzhvaHFyY2FoM2prN213NzVr","protocol":"sushi","adapter":"default","proposalId":"QmS7kYC4KR6E1gssCsK5MPoeDfktW8oHqRCaH3jK7mW75K","address":"0xd409ceA9dD8dB30504168063953cE1Fa20748cab","power":147811.42,"choice":0,"time":{"timestamp":1625066741},"timestamp":1625066741,"proposalInfo":{"title":"Buy
+                    MemePad - https://memepad.co/ - LaunchPad for Meme
+                    coins","startTime":{"timestamp":1623031200},"endTime":{"timestamp":1684980000},"startTimestamp":1623031200,"endTimestamp":1684980000,"choices":["YES","YES"],"events":[],"currentState":"active"}}]}
+
+  /protocols/{cname}/voters:
+    get:
+      tags:
+        - voter
+      summary: Get all voters for a protocol
+      operationId: getProtocolVoters
+      parameters:
+        - name: cname
+          in: path
+          description: Protocol cname.
+          required: true
+          example: aave
+          schema:
+            type: string
+      description: Get all voters for a protocol
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Voter'
+                  nextCursor:
+                    type: string
+              example: >-
+               {"data":[{"address":"0xdD709cAE362972cb3B92DCeaD77127f7b8D58202","firstVoteCast":1608813954,"lastVoteCast":1629265575,"totalVotesCast":20,"protocols":[{"protocol":"aave","totalVotesCast":20,"lastVoteCast":1629265575,"firstVoteCast":1608813954,"totalPowerCast":3873320,"lastCastPower":188761.45}]}],"nextCursor":"eysddfsdfsd=="}
+
+  /voters:
+    get:
+      tags:
+        - voter
+      summary: Get voters across all protocols
+      operationId: getVoters
+      description: Get voters across all protocols
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Voter'
+                  nextCursor:
+                    type: string
+              example: >-
+               {"data":[{"address":"0xdD709cAE362972cb3B92DCeaD77127f7b8D58202","firstVoteCast":1608813954,"lastVoteCast":1629265575,"totalVotesCast":20,"protocols":[{"protocol":"aave","totalVotesCast":20,"lastVoteCast":1629265575,"firstVoteCast":1608813954,"totalPowerCast":3873320,"lastCastPower":188761.45}]}],"nextCursor":"eysddfsdfsd=="}
+
+  /voters/{address}:
+    get:
+      tags:
+        - voter
+      summary: Get details for a specific voter
+      operationId: getVoter
+      parameters:
+        - name: address
+          in: path
+          description: Voter address.
+          required: true
+          example: "0xd409ceA9dD8dB30504168063953cE1Fa20748cab"
+          schema:
+            type: string
+      description: Get details for a specific voter
+      responses:
+        '200':
+          description: Auto generated using Swagger Inspector
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Voter'
+              example: >-
+                {"data":{"address":"0xd409ceA9dD8dB30504168063953cE1Fa20748cab","firstVoteCast":1625066741,"lastVoteCast":1625066741,"totalVotesCast":1,"protocols":[{"protocol":"sushi","totalVotesCast":1,"lastVoteCast":1625066741,"firstVoteCast":1625066741,"totalPowerCast":147811.42,"lastCastPower":147811.42}]}}
+
+  /stats:
+    get:
+      tags:
+        - stats
+      summary: Get global platform stats
+      operationId: getStats
+      description: Get global platform stats
+      responses:
+        '200':
+          description: Response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: object
+                    properties:
+                      totalProposals:
+                        type: integer
+                      totalVotesCast:
+                        type: integer
+                      totalUniqueVoters:
+                        type: integer
+                      totalProtocols:
+                        type: integer
+              example: >-
+                  {"data":{"totalProposals":2473,"totalProtocols":62,"totalUniqueVoters":37387,"totalVotesCast":216743}}
+
+
+externalDocs:
+  description: Find out more about Boardroom
+  url: 'https://docs.boardroom.info'
+components:
+  schemas:
+    Protocol:
+      type: object
+      properties:
+        icons:
+          type: array
+          items:
+            type: object
+            properties:
+              adapter:
+                type: string
+              size:
+                type: string
+              url:
+                type: string
+        tokens:
+          type: array
+          items:
+            type: object
+            properties:
+              network:
+                type: string
+              contractAddress:
+                type: string
+              marketPrices:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    currency:
+                      type: string
+                    price:
+                      type: integer
+              adapter:
+                type: string
+              symbol:
+                type: string
+        cname:
+          type: string
+        name:
+          type: string
+        totalProposals:
+          type: integer
+        totalVotes:
+          type: integer
+        uniqueVoters:
+          type: integer
+    Proposal:
+      type: object
+      properties:
+        startTimestamp:
+          type: integer
+        endTimestamp:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+        protocol:
+          type: string
+        adapter:
+          type: string
+        startTime:
+          type: object
+          properties:
+            blockNumber:
+              type: integer
+        id:
+          type: string
+        currentState:
+          type: string
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              total:
+                type: integer
+              choice:
+                type: integer
+        choices:
+          type: array
+          items: {}
+          example:
+            - NAY
+            - YAE
+        events:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+              time:
+                type: object
+                properties:
+                  blockNumber:
+                    type: integer
+              event:
+                type: string
+        refId:
+          type: string
+        proposer:
+          type: string
+        totalVotes:
+          type: integer
+        blockNumber:
+          type: integer
+        endTime:
+          type: object
+          properties:
+            blockNumber:
+              type: integer
+    Voter:
+      type: object
+      properties:
+        address:
+          type: string
+        firstVoteCast:
+          type: integer
+        lastVoteCast:
+          type: integer
+        totalVotesCast:
+          type: integer
+        protocols:
+          type: array
+          items:
+            type: object
+            properties:
+              lastCastPower:
+                type: integer
+              protocol:
+                type: string
+              totalVotesCast:
+                type: integer
+              lastVoteCast:
+                type: integer
+              firstVoteCast:
+                type: integer
+              totalPowerCast:
+                type: integer
+    Vote:
+      type: object
+      properties:
+        protocol:
+          type: string
+        proposalInfo:
+          type: object
+          properties:
+            startTime:
+              type: object
+              properties:
+                timestamp:
+                  type: integer
+            endTime:
+              type: object
+              properties:
+                timestamp:
+                  type: integer
+            title:
+              type: string
+            choices:
+              type: array
+              items:
+                type: string
+            currentState:
+              type: string
+            endTimestamp:
+              type: integer
+            startTimestamp:
+              type: integer
+            events:
+              type: array
+              items:
+                type: string
+        adapter:
+          type: string
+        address:
+          type: string
+        refId:
+          type: string
+        proposalRefId:
+          type: string
+        power:
+          type: number
+        time:
+          type: object
+          properties:
+            timestamp:
+              type: integer
+        choice:
+          type: integer
+        proposalId:
+          type: string
+        timestamp:
+          type: integer
+
