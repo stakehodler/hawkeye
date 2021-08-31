@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { Box, Spinner } from '@chakra-ui/react'
 import { useProposalVotesQuery, useProtocolProposalsQuery } from '../queries'
 import { components } from '../types/schema/swagger'
-import fromUnixTime from 'date-fns/fromUnixTime'
+import { format, fromUnixTime } from 'date-fns'
 
 interface ChartProps {
   counter?: number
@@ -12,20 +12,6 @@ interface ChartProps {
 interface ChartParams {
   protocol: string
   ref_id: string
-}
-
-const getChartData = (votes: components['schemas']['Vote'][]) => {
-  return votes
-    ?.reduce((acc, c) => {
-      const lastVote = acc[acc.length - 1]
-      const lastPower = lastVote ? lastVote[1] : 0
-      const vote: [number, number] = [c.timestamp!, (c.power || 0) + lastPower]
-
-      return acc.concat([vote])
-    }, [] as Array<[number, number]>)
-    .map(([timestamp, aggregatedPower]) => {
-      return [fromUnixTime(timestamp), aggregatedPower]
-    })
 }
 
 const Chart: React.VFC<ChartProps> = (props) => {
@@ -57,6 +43,30 @@ const Chart: React.VFC<ChartProps> = (props) => {
       ))}
     </>
   )
+}
+
+const getChartData = (votes: components['schemas']['Vote'][]) => {
+  return votes
+    .map((vote) => {
+      return [vote.timestamp!, vote.power!]
+    })
+    .sort((a, b) => {
+      return a[0] - b[0]
+    })
+    .reduce((acc, c) => {
+      const lastVote = acc[acc.length - 1]
+      const lastPower = lastVote ? lastVote[1] : 0
+      const vote: [number, number] = [c[0], c[1] + lastPower]
+
+      return acc.concat([vote])
+    }, [] as Array<[number, number]>)
+    .map(([timestamp, aggregatedPower]) => {
+      return { x: timestampToFormatted(timestamp), y: aggregatedPower }
+    })
+}
+
+const timestampToFormatted = (timestamp: number) => {
+  return format(fromUnixTime(timestamp), 'MMM do HH:mm')
 }
 
 export default Chart
