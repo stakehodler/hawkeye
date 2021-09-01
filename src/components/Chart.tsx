@@ -1,9 +1,11 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import { Box, Spinner } from '@chakra-ui/react'
+import { format, fromUnixTime } from 'date-fns'
+import { Axis, Grid, LineSeries, XYChart, Tooltip } from '@visx/xychart'
+
 import { useProposalVotesQuery, useProtocolProposalsQuery } from '../queries'
 import { components } from '../types/schema/swagger'
-import { format, fromUnixTime } from 'date-fns'
 
 interface ChartProps {
   counter?: number
@@ -29,7 +31,11 @@ const Chart: React.VFC<ChartProps> = (props) => {
   const nayChart = getChartData(nayVotes)
   const yayChart = getChartData(yayVotes)
 
-  console.log(nayChart, yayChart)
+  const voteTimestamps = nayChart
+    .concat(yayChart)
+    .map((data) => data.x)
+    .sort((a, b) => a - b)
+    .map((timestamp) => new Date(timestamp))
 
   return proposals.isLoading ? (
     <Spinner />
@@ -38,9 +44,30 @@ const Chart: React.VFC<ChartProps> = (props) => {
       <Box>Protocol: {protocol}</Box>
       <Box>Proposal: {proposal.title}</Box>
 
-      {votes.data.map((vote) => (
-        <>{vote.choice}</>
-      ))}
+      <XYChart
+        height={500}
+        xScale={{ type: 'time', nice: true }}
+        yScale={{ type: 'linear' }}
+        margin={{ top: 30, right: 60, bottom: 30, left: 60 }}
+      >
+        <Axis orientation="left" tickFormat={powerToFormatted} />
+        <Axis orientation="bottom" numTicks={5} tickFormat={timestampToFormatted} />
+        <Grid columns={false} numTicks={4} />
+        <LineSeries
+          dataKey="Nay"
+          data={nayChart}
+          xAccessor={(d) => d.x}
+          yAccessor={(d) => d.y}
+          stroke="red"
+        />
+        <LineSeries
+          dataKey="Yay"
+          data={yayChart}
+          xAccessor={(d) => d.x}
+          yAccessor={(d) => d.y}
+          stroke="green"
+        />
+      </XYChart>
     </>
   )
 }
@@ -61,12 +88,17 @@ const getChartData = (votes: components['schemas']['Vote'][]) => {
       return acc.concat([vote])
     }, [] as Array<[number, number]>)
     .map(([timestamp, aggregatedPower]) => {
-      return { x: timestampToFormatted(timestamp), y: aggregatedPower }
+      return { x: timestamp, y: aggregatedPower }
     })
 }
 
 const timestampToFormatted = (timestamp: number) => {
   return format(fromUnixTime(timestamp), 'MMM do HH:mm')
+}
+
+const powerToFormatted = (power: number) => {
+  const formatter = Intl.NumberFormat('en', { notation: 'compact' })
+  return formatter.format(power)
 }
 
 export default Chart
