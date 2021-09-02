@@ -10,7 +10,7 @@ const App = () => {
     <Flex width="100%" height="100vh" overflow="hidden">
       <Box width="500px">
         <Heading px={5} my={3} fontSize="18" position="sticky">
-          Welcome to Hawkey
+          Welcome to Hawkeye
         </Heading>
 
         <Divider />
