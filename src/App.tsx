@@ -7,7 +7,7 @@ import ProtocolView from './components/ProtocolView'
 
 const App = () => {
   return (
-    <Flex width="100%" height="100vh" overflow="hidden">
+    <Flex width="100%" height="100vh" overflow="scroll">
       <Box width="500px">
         <Heading px={5} my={3} fontSize="18" position="sticky">
           Welcome to Hawkey
@@ -22,7 +22,7 @@ const App = () => {
 
       <Divider orientation="vertical" />
 
-      <Box width="100%" padding="20px" overflow="scroll">
+      <Box width="100%" padding="20px" minW="800px">
         <Switch>
           <Route path="/protocol/:protocol/proposal/:ref_id" component={ProtocolView} />
           <Route render={() => 'use the navigation on your left...'} />
