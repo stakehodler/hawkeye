@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query'
 
-import { getProtocolProposals, getProtocols, getProtocolVotes } from './api'
+import { getProposal, getProtocolProposals, getProtocols, getProtocolVotes } from './api'
 
 const useProtocolsQuery = () => {
   return useQuery(['getProtocols'], () => getProtocols(), {
@@ -14,6 +14,13 @@ const useProtocolProposalsQuery = (cname: string) => {
   })
 }
 
+const useProposalQuery = (refId?: string) => {
+  return useQuery(['getProposal', refId], () => getProposal(refId!), {
+    select: (data) => data.data.data,
+    enabled: !!refId,
+  })
+}
+
 const useProposalVotesQuery = (refId?: string) => {
   return useQuery(['getProposalVotes', refId], () => getProtocolVotes(refId!), {
     select: (data) => data.data.data,
@@ -21,4 +28,4 @@ const useProposalVotesQuery = (refId?: string) => {
   })
 }
 
-export { useProtocolsQuery, useProtocolProposalsQuery, useProposalVotesQuery }
+export { useProtocolsQuery, useProtocolProposalsQuery, useProposalQuery, useProposalVotesQuery }

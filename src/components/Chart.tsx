@@ -1,10 +1,12 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Spinner } from '@chakra-ui/react'
-import { format, fromUnixTime } from 'date-fns'
-import { Axis, Grid, LineSeries, XYChart, Tooltip } from '@visx/xychart'
+import { Box, Text, Spinner, Flex, Heading } from '@chakra-ui/react'
+import { format } from 'date-fns'
+import { Annotation, AnnotationLabel, Axis, Grid, LineSeries, XYChart } from '@visx/xychart'
+import { LegendOrdinal } from '@visx/legend'
+import { scaleOrdinal } from '@visx/scale'
 
-import { useProposalVotesQuery, useProtocolProposalsQuery } from '../queries'
+import { useProposalQuery, useProposalVotesQuery } from '../queries'
 import { components } from '../types/schema/swagger'
 
 interface ChartProps {
@@ -19,56 +21,135 @@ interface ChartParams {
 const Chart: React.VFC<ChartProps> = (props) => {
   const { protocol, ref_id: refId } = useParams<ChartParams>()
 
-  const proposals = useProtocolProposalsQuery(protocol)
-  const proposal = proposals.data?.find((proposal) => (proposal.refId = refId))
-  const votes = useProposalVotesQuery(proposal?.refId)
+  const proposal = useProposalQuery(refId)
+  const votes = useProposalVotesQuery(proposal.data?.refId)
 
   if (!proposal || votes.isError || !votes.data) return null
 
-  const nayVotes = votes.data?.filter((vote) => vote.choice === 0)
-  const yayVotes = votes.data?.filter((vote) => vote.choice === 1)
+  const nayVotes = votes.data.filter((vote) => vote.choice === 0)
+  const yayVotes = votes.data.filter((vote) => vote.choice === 1)
 
-  const nayChart = getChartData(nayVotes)
-  const yayChart = getChartData(yayVotes)
+  const nayData = getChartData(nayVotes)
+  const yayData = getChartData(yayVotes)
 
-  const voteTimestamps = nayChart
-    .concat(yayChart)
-    .map((data) => data.x)
-    .sort((a, b) => a - b)
-    .map((timestamp) => new Date(timestamp))
+  const dateRange = nayData.concat(yayData).map((data) => data.x)
+  const voteRange = nayData.concat(yayData).map((data) => data.y)
 
-  return proposals.isLoading ? (
+  const quorumNeeded = Math.max(...voteRange) / 2
+
+  const quorumData = [
+    { x: Math.min(...dateRange), y: quorumNeeded },
+    { x: Math.max(...dateRange), y: quorumNeeded },
+  ]
+
+  const ordinalColorScale = scaleOrdinal({
+    domain: ['Yay', 'Nay'],
+    range: ['#25C9A1', '#F44061'],
+  })
+
+  return proposal.isLoading || !proposal?.data ? (
     <Spinner />
   ) : (
-    <>
-      <Box>Protocol: {protocol}</Box>
-      <Box>Proposal: {proposal.title}</Box>
+    <Box width="100%" padding="20px">
+      <Heading as="h2" fontSize="18" fontWeight="600">
+        Protocol:{' '}
+        <Text as="span" textTransform="capitalize">
+          {protocol}
+        </Text>
+      </Heading>
 
-      <XYChart
-        height={500}
-        xScale={{ type: 'time', nice: true }}
-        yScale={{ type: 'linear' }}
-        margin={{ top: 30, right: 60, bottom: 30, left: 60 }}
-      >
-        <Axis orientation="left" tickFormat={powerToFormatted} />
-        <Axis orientation="bottom" numTicks={5} tickFormat={timestampToFormatted} />
-        <Grid columns={false} numTicks={4} />
-        <LineSeries
-          dataKey="Nay"
-          data={nayChart}
-          xAccessor={(d) => d.x}
-          yAccessor={(d) => d.y}
-          stroke="red"
-        />
-        <LineSeries
-          dataKey="Yay"
-          data={yayChart}
-          xAccessor={(d) => d.x}
-          yAccessor={(d) => d.y}
-          stroke="green"
-        />
-      </XYChart>
-    </>
+      <Text fontSize="18" fontWeight="600">
+        Proposal: {proposal.data.title}
+      </Text>
+
+      <Text fontSize="18" fontWeight="600">
+        Status:{' '}
+        <Text as="span" textTransform="capitalize">
+          {proposal.data.currentState}
+        </Text>
+      </Text>
+
+      <Box backgroundColor="#F7FAFC" marginTop="6">
+        <Flex alignItems="center" justifyContent="space-between" paddingY="6" paddingX="12">
+          <Text color="#0E103B" fontSize="24" fontWeight="bold">
+            Voting Timeline
+          </Text>
+
+          <LegendOrdinal
+            scale={ordinalColorScale}
+            direction="row"
+            itemDirection="row"
+            labelMargin="0 0 0 10px"
+            shapeMargin="0 0 0 32px"
+            shapeHeight="3px"
+            shapeWidth="18px"
+            legendLabelProps={{ color: 'red' }}
+          />
+        </Flex>
+
+        <XYChart
+          height={500}
+          margin={{ top: 10, right: 80, bottom: 80, left: 80 }}
+          xScale={{ type: 'time' }}
+          yScale={{ type: 'linear', nice: true, round: true }}
+        >
+          <Grid columns={false} numTicks={5} lineStyle={{ stroke: '#EBF0F6' }} />
+          <Axis
+            orientation="left"
+            numTicks={5}
+            tickFormat={powerToFormatted}
+            hideAxisLine
+            hideTicks
+            tickLabelProps={() => ({ fill: '#A2ACBA', fontWeight: 'bold' })}
+          />
+          <Axis
+            orientation="bottom"
+            numTicks={5}
+            tickFormat={timestampToFormatted}
+            hideAxisLine
+            hideTicks
+            tickLabelProps={() => ({
+              fill: '#A2ACBA',
+              fontWeight: 'bold',
+              transform: 'translate(0, 13)',
+            })}
+          />
+          <LineSeries
+            dataKey="Nay"
+            data={nayData}
+            xAccessor={(d) => d?.x}
+            yAccessor={(d) => d?.y}
+            stroke="#F44061"
+          />
+          <LineSeries
+            dataKey="Yay"
+            data={yayData}
+            xAccessor={(d) => d?.x}
+            yAccessor={(d) => d?.y}
+            stroke="#25C9A1"
+          />
+          <LineSeries
+            dataKey="Quorum"
+            data={quorumData}
+            xAccessor={(d) => d?.x}
+            yAccessor={(d) => d?.y}
+            stroke="#728096"
+            strokeWidth="2"
+            strokeDasharray="1 4"
+          />
+          <Annotation dataKey="Quorum" datum={quorumData[1]}>
+            <AnnotationLabel
+              title="Quorum Needed"
+              showAnchorLine={false}
+              backgroundFill="transparent"
+              verticalAnchor="start"
+              width={110}
+              titleProps={{ fill: '#728096' }}
+            />
+          </Annotation>
+        </XYChart>
+      </Box>
+    </Box>
   )
 }
 
@@ -92,8 +173,8 @@ const getChartData = (votes: components['schemas']['Vote'][]) => {
     })
 }
 
-const timestampToFormatted = (timestamp: number) => {
-  return format(fromUnixTime(timestamp), 'MMM do HH:mm')
+const timestampToFormatted = (date: Date) => {
+  return format(date, 'MMM do HH:mm')
 }
 
 const powerToFormatted = (power: number) => {
