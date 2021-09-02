@@ -1,10 +1,18 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Text, Spinner, Flex, AbsoluteCenter } from '@chakra-ui/react'
+import { Box, Text, Spinner, Flex, AbsoluteCenter, Stack } from '@chakra-ui/react'
 import ReactMarkdown from 'react-markdown'
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer'
 import { format } from 'date-fns'
-import { Annotation, AnnotationLabel, Axis, Grid, LineSeries, XYChart } from '@visx/xychart'
+import {
+  Annotation,
+  AnnotationLabel,
+  Axis,
+  Grid,
+  LineSeries,
+  Tooltip,
+  XYChart,
+} from '@visx/xychart'
 import { LegendOrdinal } from '@visx/legend'
 import { scaleOrdinal } from '@visx/scale'
 
@@ -31,6 +39,8 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
 
   const nayVotes = votes.data.filter((vote) => vote.choice === 0)
   const yayVotes = votes.data.filter((vote) => vote.choice === 1)
+
+  console.log(nayVotes)
 
   const nayData = getChartData(nayVotes)
   const yayData = getChartData(yayVotes)
@@ -152,6 +162,23 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
               titleProps={{ fill: '#728096' }}
             />
           </Annotation>
+          <Tooltip<typeof yayData[0]>
+            snapTooltipToDatumX
+            snapTooltipToDatumY
+            showSeriesGlyphs
+            renderTooltip={({ tooltipData, colorScale }) =>
+              tooltipData && tooltipData.nearestDatum ? (
+                <Stack padding={2} spacing={1}>
+                  <Box>Address: {tooltipData.nearestDatum.datum.address}</Box>
+                  <Box>Vote: {tooltipData.nearestDatum.key}</Box>
+                  <Box>Power: {tooltipData.nearestDatum.datum.y}</Box>
+                  <Box>
+                    Time: {timestampToFormatted(new Date(tooltipData.nearestDatum.datum.x!))}
+                  </Box>
+                </Stack>
+              ) : null
+            }
+          />
         </XYChart>
       </Box>
 
@@ -167,20 +194,24 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
 const getChartData = (votes: components['schemas']['Vote'][]) => {
   return votes
     .map((vote) => {
-      return [vote.timestamp!, vote.power!]
+      return [vote.timestamp!, vote.power!, vote.address!]
     })
     .sort((a, b) => {
-      return a[0] - b[0]
+      return (a[0] as number) - (b[0] as number)
     })
     .reduce((acc, c) => {
       const lastVote = acc[acc.length - 1]
       const lastPower = lastVote ? lastVote[1] : 0
-      const vote: [number, number] = [c[0], c[1] + lastPower]
+      const vote: [number, number, string] = [
+        c[0] as number,
+        (c[1] as number) + lastPower,
+        c[2] as string,
+      ]
 
       return acc.concat([vote])
-    }, [] as Array<[number, number]>)
-    .map(([timestamp, aggregatedPower]) => {
-      return { x: timestamp, y: aggregatedPower }
+    }, [] as Array<[number, number, string]>)
+    .map(([timestamp, aggregatedPower, address]) => {
+      return { x: timestamp, y: aggregatedPower, address: address }
     })
 }
 
