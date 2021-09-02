@@ -74,7 +74,11 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
           />
         </Flex>
 
-        <VoteChart votes={votes.data} />
+        <VoteChart
+          votes={votes.data}
+          startDate={proposal.data.startTimestamp!}
+          endDate={proposal.data.endTimestamp!}
+        />
       </Box>
 
       {proposal.data.content ? (

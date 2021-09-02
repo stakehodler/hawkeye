@@ -15,14 +15,16 @@ import { format } from 'date-fns'
 
 interface VoteChartProps {
   votes: components['schemas']['Vote'][]
+  startDate: number
+  endDate: number
 }
 
-const VoteChart: React.VFC<VoteChartProps> = ({ votes }) => {
+const VoteChart: React.VFC<VoteChartProps> = ({ votes, startDate, endDate }) => {
   const nayVotes = votes.filter((vote) => vote.choice === 0)
   const yayVotes = votes.filter((vote) => vote.choice === 1)
 
-  const nayData = getChartData(nayVotes)
-  const yayData = getChartData(yayVotes)
+  const nayData = getChartData(nayVotes, startDate)
+  const yayData = getChartData(yayVotes, startDate)
 
   const dateRange = nayData.concat(yayData).map((data) => data.x)
   const voteRange = nayData.concat(yayData).map((data) => data.y)
@@ -100,7 +102,10 @@ const VoteChart: React.VFC<VoteChartProps> = ({ votes }) => {
         snapTooltipToDatumY
         showSeriesGlyphs
         renderTooltip={({ tooltipData, colorScale }) =>
-          tooltipData && tooltipData.nearestDatum && tooltipData.nearestDatum.key !== 'Quorum' ? (
+          tooltipData &&
+          tooltipData.nearestDatum &&
+          tooltipData.nearestDatum.key !== 'Quorum' &&
+          tooltipData.nearestDatum.datum.address ? (
             <Stack padding={2} spacing={1}>
               <Box>Address: {tooltipData.nearestDatum.datum.address}</Box>
               <Box>Vote: {tooltipData.nearestDatum.key}</Box>
@@ -114,8 +119,8 @@ const VoteChart: React.VFC<VoteChartProps> = ({ votes }) => {
   )
 }
 
-const getChartData = (votes: components['schemas']['Vote'][]) => {
-  return votes
+const getChartData = (votes: components['schemas']['Vote'][], startDate: number) => {
+  const data = votes
     .map((vote) => {
       return [vote.timestamp!, vote.power!, vote.address!]
     })
@@ -136,6 +141,8 @@ const getChartData = (votes: components['schemas']['Vote'][]) => {
     .map(([timestamp, aggregatedPower, address]) => {
       return { x: timestamp, y: aggregatedPower, address: address }
     })
+
+  return [{ x: startDate, y: 0, address: '' }].concat(data)
 }
 
 const timestampToFormatted = (date: Date) => {
