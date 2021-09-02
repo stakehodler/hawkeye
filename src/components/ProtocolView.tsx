@@ -167,7 +167,9 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
             snapTooltipToDatumY
             showSeriesGlyphs
             renderTooltip={({ tooltipData, colorScale }) =>
-              tooltipData && tooltipData.nearestDatum ? (
+              tooltipData &&
+              tooltipData.nearestDatum &&
+              tooltipData.nearestDatum.key !== 'Quorum' ? (
                 <Stack padding={2} spacing={1}>
                   <Box>Address: {tooltipData.nearestDatum.datum.address}</Box>
                   <Box>Vote: {tooltipData.nearestDatum.key}</Box>

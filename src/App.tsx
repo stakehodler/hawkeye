@@ -1,6 +1,6 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
-import { Box, Flex, Heading } from '@chakra-ui/react'
+import { Box, Divider, Flex, Heading } from '@chakra-ui/react'
 
 import ProtocolNav from './components/ProtocolNav'
 import ProtocolView from './components/ProtocolView'
@@ -12,10 +12,15 @@ const App = () => {
         <Heading px={5} my={3} fontSize="18" position="sticky">
           Welcome to Hawkey
         </Heading>
+
+        <Divider />
+
         <Box overflow="scroll" maxHeight="100%">
           <ProtocolNav />
         </Box>
       </Box>
+
+      <Divider orientation="vertical" />
 
       <Box width="100%" padding="20px" overflow="scroll">
         <Switch>
