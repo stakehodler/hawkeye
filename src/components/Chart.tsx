@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Text, Spinner, Flex, Heading } from '@chakra-ui/react'
+import { Box, Text, Spinner, Flex, Heading, AbsoluteCenter } from '@chakra-ui/react'
 import { format } from 'date-fns'
 import { Annotation, AnnotationLabel, Axis, Grid, LineSeries, XYChart } from '@visx/xychart'
 import { LegendOrdinal } from '@visx/legend'
@@ -48,26 +48,28 @@ const Chart: React.VFC<ChartProps> = (props) => {
   })
 
   return proposal.isLoading || !proposal?.data ? (
-    <Spinner />
+    <AbsoluteCenter>
+      <Spinner />
+    </AbsoluteCenter>
   ) : (
     <Box width="100%" padding="20px">
-      <Heading as="h2" fontSize="18" fontWeight="600">
-        Protocol:{' '}
-        <Text as="span" textTransform="capitalize">
-          {protocol}
+      <Box color="#728096" fontSize="16" fontWeight="600">
+        <Text>
+          Protocol:{' '}
+          <Text as="span" textTransform="capitalize">
+            {protocol}
+          </Text>
         </Text>
-      </Heading>
 
-      <Text fontSize="18" fontWeight="600">
-        Proposal: {proposal.data.title}
-      </Text>
+        <Text>Proposal: {proposal.data.title}</Text>
 
-      <Text fontSize="18" fontWeight="600">
-        Status:{' '}
-        <Text as="span" textTransform="capitalize">
-          {proposal.data.currentState}
+        <Text>
+          Status:{' '}
+          <Text as="span" textTransform="capitalize">
+            {proposal.data.currentState}
+          </Text>
         </Text>
-      </Text>
+      </Box>
 
       <Box backgroundColor="#F7FAFC" marginTop="6">
         <Flex alignItems="center" justifyContent="space-between" paddingY="6" paddingX="12">

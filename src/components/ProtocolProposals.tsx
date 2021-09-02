@@ -1,6 +1,6 @@
 import React from 'react'
 import { useProtocolProposalsQuery } from '../queries'
-import { Divider, Flex, Link, ListItem, OrderedList, Spinner } from '@chakra-ui/react'
+import { Divider, Flex, Link, ListItem, OrderedList, Spinner, Text } from '@chakra-ui/react'
 import { Link as RouterLink } from 'react-router-dom'
 
 interface ProtocolProposalsProps {
@@ -14,6 +14,10 @@ const ProtocolProposals: React.VFC<ProtocolProposalsProps> = ({ cname }) => {
     <>
       {proposals.isLoading ? (
         <Spinner />
+      ) : proposals.isSuccess && proposals.data?.length === 0 ? (
+        <Text paddingY={1} alignItems="center" fontSize="medium" ml="2">
+          No proposals...
+        </Text>
       ) : proposals.isSuccess && proposals.data ? (
         <OrderedList>
           {proposals.data.map((proposal) => (
