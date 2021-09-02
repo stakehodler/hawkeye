@@ -1,6 +1,8 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { Box, Text, Spinner, Flex, Heading, AbsoluteCenter } from '@chakra-ui/react'
+import { Box, Text, Spinner, Flex, AbsoluteCenter } from '@chakra-ui/react'
+import ReactMarkdown from 'react-markdown'
+import ChakraUIRenderer from 'chakra-ui-markdown-renderer'
 import { format } from 'date-fns'
 import { Annotation, AnnotationLabel, Axis, Grid, LineSeries, XYChart } from '@visx/xychart'
 import { LegendOrdinal } from '@visx/legend'
@@ -18,11 +20,12 @@ interface ChartParams {
   ref_id: string
 }
 
-const Chart: React.VFC<ChartProps> = (props) => {
+const ProtocolView: React.VFC<ChartProps> = (props) => {
   const { protocol, ref_id: refId } = useParams<ChartParams>()
 
   const proposal = useProposalQuery(refId)
   const votes = useProposalVotesQuery(proposal.data?.refId)
+  console.log(proposal.data)
 
   if (!proposal || votes.isError || !votes.data) return null
 
@@ -52,7 +55,7 @@ const Chart: React.VFC<ChartProps> = (props) => {
       <Spinner />
     </AbsoluteCenter>
   ) : (
-    <Box width="100%" padding="20px">
+    <Box width="100%">
       <Box color="#728096" fontSize="16" fontWeight="600">
         <Text>
           Protocol:{' '}
@@ -151,6 +154,12 @@ const Chart: React.VFC<ChartProps> = (props) => {
           </Annotation>
         </XYChart>
       </Box>
+
+      {proposal.data.content ? (
+        <Box marginTop="6">
+          <ReactMarkdown components={ChakraUIRenderer()}>{proposal.data.content}</ReactMarkdown>
+        </Box>
+      ) : null}
     </Box>
   )
 }
@@ -184,4 +193,4 @@ const powerToFormatted = (power: number) => {
   return formatter.format(power)
 }
 
-export default Chart
+export default ProtocolView
