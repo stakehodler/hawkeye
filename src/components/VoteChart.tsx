@@ -1,9 +1,10 @@
 import { Axis, Grid, LineSeries, Tooltip, XYChart } from '@visx/xychart'
-import { Box, Stack } from '@chakra-ui/react'
+import { Box, Center, Flex, Stack, Tag, Text } from '@chakra-ui/react'
 import React from 'react'
 
 import { components } from '../types/schema/swagger'
 import { format } from 'date-fns'
+import addressPrettier from '../AddressPrettier'
 
 interface VoteChartProps {
   votes: components['schemas']['Vote'][]
@@ -79,17 +80,27 @@ const VoteChart: React.VFC<VoteChartProps> = ({
           tooltipData.nearestDatum.key !== 'Quorum' &&
           tooltipData.nearestDatum.datum.address ? (
             <Stack padding={2} spacing={1}>
-              <Box>
-                Address:
-                {tooltipData.nearestDatum.datum.address?.substr(0, 5)}...
-                {tooltipData.nearestDatum.datum.address?.substr(
-                  tooltipData.nearestDatum.datum.address?.length - 4,
-                  tooltipData.nearestDatum.datum.address?.length,
-                )}
-              </Box>
-              <Box>Vote: {tooltipData.nearestDatum.key}</Box>
-              <Box>Power: {tooltipData.nearestDatum.datum.y}</Box>
-              <Box>Time: {timestampToFormatted(new Date(tooltipData.nearestDatum.datum.x!))}</Box>
+              <Flex>
+                <Tag
+                  size={'sm'}
+                  backgroundColor={choiceColors[tooltipData.nearestDatum.datum.choice]}
+                  color={'white'}
+                >
+                  <Center>{tooltipData.nearestDatum.key}</Center>
+                </Tag>
+              </Flex>
+              <Flex paddingY={1}>
+                <Box minWidth="60px"> Address:</Box>
+                {addressPrettier(tooltipData.nearestDatum.datum.address)}
+              </Flex>
+              <Flex paddingBottom={1}>
+                <Box minWidth="60px">Power: </Box>
+                {tooltipData.nearestDatum.datum.y}
+              </Flex>
+              <Flex paddingBottom={2}>
+                <Box minWidth="60px">Time:</Box>{' '}
+                {timestampToFormatted(new Date(tooltipData.nearestDatum.datum.x!))}
+              </Flex>
             </Stack>
           ) : null
         }
@@ -122,7 +133,7 @@ const getChartData = (votes: components['schemas']['Vote'][], startDate: number)
       return { x: timestamp, y: aggregatedPower, address: address, choice: choice }
     })
 
-  return [{ x: startDate, y: 0, address: '' }].concat(data)
+  return [{ x: startDate, y: 0, address: '', choice: 0 }].concat(data)
 }
 
 const timestampToFormatted = (date: Date) => {

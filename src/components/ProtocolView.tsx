@@ -22,6 +22,7 @@ import { useProposalQuery, useProposalVotesQuery, useProtocolDetailsQuery } from
 import VoteChart from './VoteChart'
 import ProtocolIcon from './ProtocolIcon'
 import VoterListItem from './VoterView'
+import addressPrettier from '../AddressPrettier'
 
 interface ChartProps {
   counter?: number
@@ -85,11 +86,7 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
         <Text>
           proposer:{' '}
           <Link href={'https://app.boardroom.info/voter/' + proposal.data.proposer} target="_blank">
-            {proposal.data.proposer?.substr(0, 5)}...
-            {proposal.data.proposer?.substr(
-              proposal.data.proposer?.length - 4,
-              proposal.data.proposer?.length,
-            )}
+            {addressPrettier(proposal.data.proposer)}
           </Link>
         </Text>
       </Box>

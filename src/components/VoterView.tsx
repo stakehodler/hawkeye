@@ -3,6 +3,7 @@ import { components } from '../types/schema/swagger'
 import { Box, Center, Divider, Flex, Link, ListItem, Tag, Text } from '@chakra-ui/react'
 import { useProposalQuery, useVoterDetailsQuery } from '../queries'
 import { format } from 'date-fns'
+import addressPrettier from '../AddressPrettier'
 
 interface VoterItemProps {
   vote: components['schemas']['Vote']
@@ -20,8 +21,7 @@ const VoterListItem: React.VFC<VoterItemProps> = ({ vote, choices, colors }) => 
       <Flex justify="center" alignItems="center">
         <Box flexGrow={1} paddingY={3} paddingX={1}>
           <Link href={'https://app.boardroom.info/voter/' + vote.address} target="_blank">
-            {vote.address?.substr(0, 5)}...
-            {vote.address?.substr(vote.address?.length - 4, vote.address?.length)}
+            {addressPrettier(vote.address)}
           </Link>
         </Box>
         <Box width="25%" paddingX={4} borderLeftColor="rgba(89, 87, 116, 0.1)" borderLeftWidth={1}>
