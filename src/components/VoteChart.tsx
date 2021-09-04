@@ -1,13 +1,5 @@
-import {
-  Annotation,
-  AnnotationLabel,
-  Axis,
-  Grid,
-  LineSeries,
-  Tooltip,
-  XYChart,
-} from '@visx/xychart'
-import { Box, Stack } from '@chakra-ui/react'
+import { Axis, Grid, LineSeries, Tooltip, XYChart } from '@visx/xychart'
+import { Box, Link, Stack } from '@chakra-ui/react'
 import React from 'react'
 
 import { components } from '../types/schema/swagger'
@@ -17,24 +9,37 @@ interface VoteChartProps {
   votes: components['schemas']['Vote'][]
   startDate: number
   endDate: number
+  choices: string[]
+  choiceColors: string[]
 }
 
-const VoteChart: React.VFC<VoteChartProps> = ({ votes, startDate, endDate }) => {
-  const nayVotes = votes.filter((vote) => vote.choice === 0)
-  const yayVotes = votes.filter((vote) => vote.choice === 1)
+const VoteChart: React.VFC<VoteChartProps> = ({
+  votes,
+  startDate,
+  endDate,
+  choices,
+  choiceColors,
+}) => {
+  const votesByChoice = choiceColors.map((value, index) => {
+    const filteredVotes = votes.filter((vote) => vote.choice === index)
+    return filteredVotes
+  })
 
-  const nayData = getChartData(nayVotes, startDate)
-  const yayData = getChartData(yayVotes, startDate)
+  const chartData = votesByChoice.map((value, index) => {
+    return getChartData(value, startDate)
+  })
 
-  const dateRange = nayData.concat(yayData).map((data) => data.x)
-  const voteRange = nayData.concat(yayData).map((data) => data.y)
-
-  const quorumNeeded = Math.max(...voteRange) / 2
-
-  const quorumData = [
-    { x: Math.min(...dateRange), y: quorumNeeded },
-    { x: Math.max(...dateRange), y: quorumNeeded },
-  ]
+  const chartComponent = chartData.map((value, index) => {
+    return (
+      <LineSeries
+        dataKey={choices[index]}
+        data={value}
+        xAccessor={(d) => d?.x}
+        yAccessor={(d) => d?.y}
+        stroke={choiceColors[index]}
+      />
+    )
+  })
 
   return (
     <XYChart
@@ -64,40 +69,8 @@ const VoteChart: React.VFC<VoteChartProps> = ({ votes, startDate, endDate }) => 
           transform: 'translate(0, 13)',
         })}
       />
-      <LineSeries
-        dataKey="Nay"
-        data={nayData}
-        xAccessor={(d) => d?.x}
-        yAccessor={(d) => d?.y}
-        stroke="#F44061"
-      />
-      <LineSeries
-        dataKey="Yay"
-        data={yayData}
-        xAccessor={(d) => d?.x}
-        yAccessor={(d) => d?.y}
-        stroke="#25C9A1"
-      />
-      <LineSeries
-        dataKey="Quorum"
-        data={quorumData}
-        xAccessor={(d) => d?.x}
-        yAccessor={(d) => d?.y}
-        stroke="#728096"
-        strokeWidth="2"
-        strokeDasharray="1 4"
-      />
-      <Annotation dataKey="Quorum" datum={quorumData[1]}>
-        <AnnotationLabel
-          title="Quorum Needed"
-          showAnchorLine={false}
-          backgroundFill="transparent"
-          verticalAnchor="start"
-          width={110}
-          titleProps={{ fill: '#728096' }}
-        />
-      </Annotation>
-      <Tooltip<typeof yayData[0]>
+      <>{chartComponent}</>
+      <Tooltip<typeof chartData[0][0]>
         snapTooltipToDatumX
         snapTooltipToDatumY
         showSeriesGlyphs
@@ -122,7 +95,7 @@ const VoteChart: React.VFC<VoteChartProps> = ({ votes, startDate, endDate }) => 
 const getChartData = (votes: components['schemas']['Vote'][], startDate: number) => {
   const data = votes
     .map((vote) => {
-      return [vote.timestamp!, vote.power!, vote.address!]
+      return [vote.timestamp!, vote.power!, vote.address!, vote!.choice]
     })
     .sort((a, b) => {
       return (a[0] as number) - (b[0] as number)
@@ -130,16 +103,17 @@ const getChartData = (votes: components['schemas']['Vote'][], startDate: number)
     .reduce((acc, c) => {
       const lastVote = acc[acc.length - 1]
       const lastPower = lastVote ? lastVote[1] : 0
-      const vote: [number, number, string] = [
+      const vote: [number, number, string, number] = [
         c[0] as number,
         (c[1] as number) + lastPower,
         c[2] as string,
+        c[3] as number,
       ]
 
       return acc.concat([vote])
-    }, [] as Array<[number, number, string]>)
-    .map(([timestamp, aggregatedPower, address]) => {
-      return { x: timestamp, y: aggregatedPower, address: address }
+    }, [] as Array<[number, number, string, number]>)
+    .map(([timestamp, aggregatedPower, address, choice]) => {
+      return { x: timestamp, y: aggregatedPower, address: address, choice: choice }
     })
 
   return [{ x: startDate, y: 0, address: '' }].concat(data)

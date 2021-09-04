@@ -90,7 +90,7 @@ export interface components {
         total?: number
         choice?: number
       }[]
-      choices?: { [key: string]: unknown }[]
+      choices?: string[] //was{ [key: string]: unknown }[]
       events?: {
         timestamp?: number
         time?: {

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Switch, Route } from 'react-router-dom'
-import { Box, Divider, Flex, Heading } from '@chakra-ui/react'
+import { Box, Flex, Heading } from '@chakra-ui/react'
 
 import ProtocolNav from './components/ProtocolNav'
 import ProtocolView from './components/ProtocolView'
