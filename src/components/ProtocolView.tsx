@@ -38,30 +38,32 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
     </AbsoluteCenter>
   ) : (
     <Box width="100%">
-      <Box color="#728096" fontSize="16" fontWeight="600">
+      <Box color="#19153f" background="#dddcea" fontSize="16" fontWeight="600">
         <Text>
-          Protocol:{' '}
           <Text as="span" textTransform="capitalize">
             {protocol}
           </Text>
         </Text>
 
-        <Text>Proposal: {proposal.data.title}</Text>
+        <Text>{proposal.data.title}</Text>
+      </Box>
 
-        <Text>
-          Status:{' '}
+      <Box
+        backgroundColor="#F7FAFC"
+        marginTop="6"
+        boxShadow="xl"
+        p="4"
+        rounded="md"
+        bg="white"
+        textColor="#aeadbc"
+      >
+        <Flex alignItems="center" justifyContent="space-between" paddingY="6" paddingX="12">
+          <Text color="#0E103B" fontSize="24" fontWeight="bold" flexGrow={1}>
+            Voting Timeline
+          </Text>
           <Text as="span" textTransform="capitalize">
             {proposal.data.currentState}
           </Text>
-        </Text>
-      </Box>
-
-      <Box backgroundColor="#F7FAFC" marginTop="6">
-        <Flex alignItems="center" justifyContent="space-between" paddingY="6" paddingX="12">
-          <Text color="#0E103B" fontSize="24" fontWeight="bold">
-            Voting Timeline
-          </Text>
-
           <LegendOrdinal
             scale={ordinalColorScale}
             direction="row"

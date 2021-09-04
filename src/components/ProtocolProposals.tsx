@@ -31,7 +31,7 @@ const ProtocolProposals: React.VFC<ProtocolProposalsProps> = ({ cname }) => {
                 </Link>
               </Flex>
 
-              <Divider />
+              <Divider borderColor="rgba(89, 87, 116, 0.5)" height="1px" />
             </ListItem>
           ))}
         </OrderedList>

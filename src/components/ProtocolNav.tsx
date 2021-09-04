@@ -22,13 +22,12 @@ const ProtocolNav = () => {
       <Spinner />
     </AbsoluteCenter>
   ) : protocols.isSuccess && protocols.data ? (
-    <Accordion allowToggle>
+    <Accordion allowToggle borderColor="rgba(89, 87, 116, 0.5)" borderLeft={0} borderRight={0}>
       {protocols.data.map((protocol) => (
         <AccordionItem key={protocol.cname}>
           <AccordionButton>
             <Avatar src={protocol.icons?.[0]?.url} size="sm" marginRight="3" />
-
-            <Box flex="1" textAlign="left" fontWeight="semibold">
+            <Box flex="1" textAlign="left" fontWeight="semibold" paddingY="3">
               {protocol.name}
             </Box>
             <AccordionIcon />
