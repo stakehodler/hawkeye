@@ -1,9 +1,21 @@
 import { useQuery } from 'react-query'
 
-import { getProposal, getProtocolProposals, getProtocols, getProtocolVotes } from './api'
+import {
+  getProposal,
+  getProtocolDetails,
+  getProtocolProposals,
+  getProtocols,
+  getProtocolVotes,
+} from './api'
 
 const useProtocolsQuery = () => {
   return useQuery(['getProtocols'], () => getProtocols(), {
+    select: (data) => data.data.data,
+  })
+}
+
+const useProtocolDetailsQuery = (cname: string) => {
+  return useQuery(['getProtocolDetails', cname], () => getProtocolDetails(cname), {
     select: (data) => data.data.data,
   })
 }
@@ -28,4 +40,10 @@ const useProposalVotesQuery = (refId?: string) => {
   })
 }
 
-export { useProtocolsQuery, useProtocolProposalsQuery, useProposalQuery, useProposalVotesQuery }
+export {
+  useProtocolsQuery,
+  useProtocolDetailsQuery,
+  useProtocolProposalsQuery,
+  useProposalQuery,
+  useProposalVotesQuery,
+}

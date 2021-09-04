@@ -13,6 +13,7 @@ import {
 import ProtocolProposals from './ProtocolProposals'
 
 import { useProtocolsQuery } from '../queries'
+import ProtocolIcon from './ProtocolIcon'
 
 const ProtocolNav = () => {
   const protocols = useProtocolsQuery()
@@ -26,10 +27,12 @@ const ProtocolNav = () => {
       {protocols.data.map((protocol) => (
         <AccordionItem key={protocol.cname}>
           <AccordionButton>
-            <Avatar src={protocol.icons?.[0]?.url} size="sm" marginRight="3" />
+            <ProtocolIcon protocol={protocol} />
+
             <Box flex="1" textAlign="left" fontWeight="semibold" paddingY="3">
               {protocol.name}
             </Box>
+
             <AccordionIcon />
           </AccordionButton>
           <AccordionPanel>
