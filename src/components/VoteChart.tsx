@@ -1,5 +1,5 @@
 import { Axis, Grid, LineSeries, Tooltip, XYChart } from '@visx/xychart'
-import { Box, Link, Stack } from '@chakra-ui/react'
+import { Box, Stack } from '@chakra-ui/react'
 import React from 'react'
 
 import { components } from '../types/schema/swagger'
@@ -21,8 +21,7 @@ const VoteChart: React.VFC<VoteChartProps> = ({
   choiceColors,
 }) => {
   const votesByChoice = choiceColors.map((value, index) => {
-    const filteredVotes = votes.filter((vote) => vote.choice === index)
-    return filteredVotes
+    return votes.filter((vote) => vote.choice === index)
   })
 
   const chartData = votesByChoice.map((value, index) => {
@@ -80,7 +79,14 @@ const VoteChart: React.VFC<VoteChartProps> = ({
           tooltipData.nearestDatum.key !== 'Quorum' &&
           tooltipData.nearestDatum.datum.address ? (
             <Stack padding={2} spacing={1}>
-              <Box>Address: {tooltipData.nearestDatum.datum.address}</Box>
+              <Box>
+                Address:
+                {tooltipData.nearestDatum.datum.address?.substr(0, 5)}...
+                {tooltipData.nearestDatum.datum.address?.substr(
+                  tooltipData.nearestDatum.datum.address?.length - 4,
+                  tooltipData.nearestDatum.datum.address?.length,
+                )}
+              </Box>
               <Box>Vote: {tooltipData.nearestDatum.key}</Box>
               <Box>Power: {tooltipData.nearestDatum.datum.y}</Box>
               <Box>Time: {timestampToFormatted(new Date(tooltipData.nearestDatum.datum.x!))}</Box>

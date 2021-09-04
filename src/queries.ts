@@ -6,6 +6,7 @@ import {
   getProtocolProposals,
   getProtocols,
   getProtocolVotes,
+  getVoterDetails,
 } from './api'
 
 const useProtocolsQuery = () => {
@@ -39,6 +40,12 @@ const useProposalVotesQuery = (refId?: string) => {
     enabled: !!refId,
   })
 }
+const useVoterDetailsQuery = (address?: string) => {
+  return useQuery(['getVoterDetails', address], () => getVoterDetails(address!), {
+    select: (data) => data.data.data,
+    enabled: !!address,
+  })
+}
 
 export {
   useProtocolsQuery,
@@ -46,4 +53,5 @@ export {
   useProtocolProposalsQuery,
   useProposalQuery,
   useProposalVotesQuery,
+  useVoterDetailsQuery,
 }

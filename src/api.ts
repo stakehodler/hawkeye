@@ -37,4 +37,17 @@ const getProtocolVotes = (refId: string) => {
   return instance.get<GetProposalVotesResponse>(`/proposals/${refId}/votes`)
 }
 
-export { getProtocols, getProtocolDetails, getProtocolProposals, getProposal, getProtocolVotes }
+type GetVoterDetailsResponse =
+  operations['getVoter']['responses']['200']['content']['application/json']
+const getVoterDetails = (address: string) => {
+  return instance.get<GetVoterDetailsResponse>(`/voters/${address}`)
+}
+
+export {
+  getProtocols,
+  getProtocolDetails,
+  getProtocolProposals,
+  getProposal,
+  getProtocolVotes,
+  getVoterDetails,
+}

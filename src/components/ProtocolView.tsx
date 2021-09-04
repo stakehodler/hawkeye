@@ -9,8 +9,8 @@ import {
   Button,
   Collapse,
   Center,
-  UnorderedList,
   List,
+  Link,
 } from '@chakra-ui/react'
 import ReactMarkdown from 'react-markdown'
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer'
@@ -47,9 +47,7 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
 
   if (proposal.isLoading || votes.isError || !proposal.data || !votes.data) return null
 
-  console.log(proposal.data)
-
-  const colorsList = ['#dc7117', '#e3cc1b', '#f51889', '#4eaeee', '#9F7AEA', '#553C9A', '#086F83']
+  const colorsList = ['#1698EA', '#5F69EA', '#9F5EDE', '#c93270', '#DB682D', '#BF8124', '#A28E2B']
 
   const choiceColors = proposal?.data?.choices?.map((item, index) => {
     const choice: string = item?.toString()?.toLowerCase()
@@ -84,7 +82,16 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
         </Flex>
 
         <Text>{proposal.data.title}</Text>
-        <Text>proposer: {proposal.data.proposer}</Text>
+        <Text>
+          proposer:{' '}
+          <Link href={'https://app.boardroom.info/voter/' + proposal.data.proposer} target="_blank">
+            {proposal.data.proposer?.substr(0, 5)}...
+            {proposal.data.proposer?.substr(
+              proposal.data.proposer?.length - 4,
+              proposal.data.proposer?.length,
+            )}
+          </Link>
+        </Text>
       </Box>
       <Text color="#0E103B" fontSize="24" fontWeight="bold" marginX={8} marginY={4}>
         Voting Timeline
@@ -100,8 +107,11 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
         textColor="#aeadbc"
       >
         <Flex alignItems="center" justifyContent="space-between" paddingY="6" paddingX="12">
-          <Text as="span" textTransform="capitalize" paddingX={4}>
-            Status: <Text>{proposal.data.currentState}</Text>
+          <Text paddingEnd={4}>
+            Status:{' '}
+            <Text as="span" textTransform="capitalize">
+              {proposal.data.currentState}
+            </Text>
           </Text>
 
           <Box flexGrow={1} />
@@ -179,22 +189,11 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
         bg="white"
         overflow="hidden"
       >
-        <Collapse startingHeight={200} in={isExpanded}>
+        {proposal.data.content ? (
           <Box>
-            {proposal.data.content ? (
-              <Box marginTop="6">
-                <ReactMarkdown components={ChakraUIRenderer()}>
-                  {proposal.data.content}
-                </ReactMarkdown>
-              </Box>
-            ) : null}
+            <ReactMarkdown components={ChakraUIRenderer()}>{proposal.data.content}</ReactMarkdown>
           </Box>
-        </Collapse>
-        <Center>
-          <Button size="sm" onClick={handleToggle} mt="1rem">
-            Show {isExpanded ? 'Less' : 'More'}
-          </Button>
-        </Center>
+        ) : null}
       </Box>
     </Box>
   )
