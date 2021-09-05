@@ -19,17 +19,18 @@ const VoterListItem: React.VFC<VoterItemProps> = ({ vote, choices, colors }) => 
   return (
     <ListItem>
       <Flex justify="center" alignItems="center">
-        <Box flexGrow={1} paddingY={3} paddingX={1}>
-          <Link href={'https://app.boardroom.info/voter/' + vote.address} target="_blank">
-            {addressPrettier(vote.address)}
-          </Link>
-        </Box>
-        <Box width="25%" paddingX={4} borderLeftColor="rgba(89, 87, 116, 0.1)" borderLeftWidth={1}>
-          <Tag backgroundColor={colors[vote.choice!]} color={'white'}>
+        <Flex flexGrow={1} paddingY={3} paddingX={1} justifyItems="center" alignItems="center">
+          <Box width="140px">
+            <Link href={'https://app.boardroom.info/voter/' + vote.address} target="_blank">
+              {addressPrettier(vote.address)}
+            </Link>
+          </Box>
+          <Tag backgroundColor={colors[vote.choice!]} color="white" size="sm" marginX={3}>
             <Center>{choices[vote.choice!]}</Center>
           </Tag>
-        </Box>
-        <Box width="25%" paddingX={4} borderLeftColor="rgba(89, 87, 116, 0.1)" borderLeftWidth={1}>
+        </Flex>
+
+        <Box flexGrow={1} paddingX={4} borderLeftColor="rgba(89, 87, 116, 0.1)" borderLeftWidth={1}>
           <Center>{timestampToFormatted(new Date(vote.timestamp!))}</Center>
         </Box>
         <Box
@@ -41,7 +42,12 @@ const VoterListItem: React.VFC<VoterItemProps> = ({ vote, choices, colors }) => 
           fontWeight="600"
           textAlign="right"
         >
-          <Text>{vote.power}</Text>
+          <Text>
+            {vote.power!.toLocaleString(undefined, {
+              maximumFractionDigits: 12,
+              minimumFractionDigits: 4,
+            })}
+          </Text>
         </Box>
       </Flex>
       <Divider borderColor="rgba(89, 87, 116, 0.1)" height={1} />

@@ -11,6 +11,7 @@ import {
   Center,
   List,
   Link,
+  Badge,
 } from '@chakra-ui/react'
 import ReactMarkdown from 'react-markdown'
 import ChakraUIRenderer from 'chakra-ui-markdown-renderer'
@@ -40,27 +41,25 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
   const proposal = useProposalQuery(refId)
   const votes = useProposalVotesQuery(proposal.data?.refId)
 
-  const [isExpanded, setExpanded] = useState(false)
   const [isExpandedList, setListExpanded] = useState(false)
 
-  const handleToggle = () => setExpanded(!isExpanded)
   const handleListToggle = () => setListExpanded(!isExpandedList)
 
   if (proposal.isLoading || votes.isError || !proposal.data || !votes.data) return null
 
-  const colorsList = ['#1698EA', '#5F69EA', '#9F5EDE', '#c93270', '#DB682D', '#BF8124', '#A28E2B']
+  const colorsList = ['#1698EA', '#5F69EA', '#9F5EDE', '#D853AC', '#DB682D', '#BF8124', '#A28E2B']
 
   const choiceColors = proposal?.data?.choices?.map((item, index) => {
     const choice: string = item?.toString()?.toLowerCase()
     if (choice === 'yae' || choice === 'yey' || choice === 'yes') {
-      return '#25C9A1'
+      return '#54A262'
     } else if (choice === 'nay' || choice === 'nae' || choice === 'no') {
-      return '#F44061'
+      return '#D55D71'
     } else {
       return colorsList[index % colorsList.length]
     }
   })
-
+  console.log(votes)
   const scaleConfig = {
     domain: proposal?.data?.choices,
     range: choiceColors,
@@ -90,9 +89,15 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
           </Link>
         </Text>
       </Box>
-      <Text color="#0E103B" fontSize="24" fontWeight="bold" marginX={8} marginY={4}>
-        Voting Timeline
-      </Text>
+
+      <Flex marginX={8} marginY={4} alignItems={'center'}>
+        <Text color="#0E103B" fontSize="24" fontWeight="bold">
+          Voting Timeline
+        </Text>
+        <Box marginX={2}>
+          <Badge>{proposal.data.currentState}</Badge>
+        </Box>
+      </Flex>
       <Box
         backgroundColor="#F7FAFC"
         marginX={8}
@@ -104,13 +109,6 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
         textColor="#aeadbc"
       >
         <Flex alignItems="center" justifyContent="space-between" paddingY="6" paddingX="12">
-          <Text paddingEnd={4}>
-            Status:{' '}
-            <Text as="span" textTransform="capitalize">
-              {proposal.data.currentState}
-            </Text>
-          </Text>
-
           <Box flexGrow={1} />
           <Box overflow="hidden">
             <LegendOrdinal
@@ -135,9 +133,14 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
         />
       </Box>
 
-      <Text marginX={8} marginY={4} color="#0E103B" fontSize="18" fontWeight="bold">
-        Voters
-      </Text>
+      <Flex marginX={8} marginY={4} alignItems={'center'}>
+        <Text color="#0E103B" fontSize="18" fontWeight="bold">
+          Votes
+        </Text>
+        <Box marginX={2}>
+          <Badge>{votes.data.length}</Badge>
+        </Box>
+      </Flex>
       <Box
         backgroundColor="#F7FAFC"
         marginX={8}
@@ -148,11 +151,14 @@ const ProtocolView: React.VFC<ChartProps> = (props) => {
         bg="white"
         overflow="hidden"
       >
-        <Collapse startingHeight={200} in={isExpandedList}>
+        <Collapse
+          startingHeight={votes?.data?.length > 4 ? 48 * 4 + 10 : 48 * votes?.data?.length + 10}
+          in={isExpandedList}
+        >
           <List>
             {votes.data
               .sort((a, b) => {
-                return (b.power as number) - (a.power as number)
+                return (b.timestamp as number) - (a.timestamp as number)
               })
               .map((item) => {
                 return (
